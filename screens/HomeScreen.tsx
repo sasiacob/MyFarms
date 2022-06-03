@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { FarmCard, View, Text, Button } from "../components";
 import { onLogout, db } from "../firebase/firebase";
 import { Farm } from "../models/farm";
@@ -12,9 +12,17 @@ const HomeScreen = () => {
 	useEffect(() => {
 		const unsubscribe = onSnapshot(collection(db, "farms"), (snapshot) => {
 			const data: Farm[] = snapshot.docs.map((doc) => {
+				const creationDate: Timestamp = doc.data().creationDate;
+				const updatedDate: Timestamp = doc.data().updatedDate;
+				const obj = doc.data();
+				delete obj.creationDate;
+				delete obj.updatedDate;
+
 				let item = {
 					id: doc.id,
-					...doc.data(),
+					creationDate: creationDate?.toDate().toDateString(),
+					updatedDate: updatedDate?.toDate().toDateString(),
+					...obj,
 				} as Farm;
 				return item;
 			});
@@ -36,15 +44,13 @@ const HomeScreen = () => {
 				style={styles.listContainer}
 				ListHeaderComponent={
 					<View>
-						<View>
-							<Button title="Log Out" onPress={onLogoutPress} />
-						</View>
-						<View>
-							<Button title="Fetch data" onPress={onFetchPress} />
-						</View>
-						<View>
-							<Button title="Add Farm" onPress={onAddPress} />
-						</View>
+						<Button
+							containerStyle={styles.btnContainer}
+							title="Log Out"
+							onPress={onLogoutPress}
+						/>
+
+						<Button style={styles.btnContainer} title="Add Farm" onPress={onAddPress} />
 					</View>
 				}
 				ListEmptyComponent={
@@ -72,5 +78,8 @@ const styles = StyleSheet.create({
 		padding: 20,
 		width: "80%",
 		maxWidth: 500,
+	},
+	btnContainer: {
+		marginVertical: 5,
 	},
 });

@@ -5,4 +5,6 @@ export type Farm = {
 	phone?: string;
 	openHours?: string;
 	imageUrl?: string;
+	updatedDate?: string;
+	creationDate?: string;
 };

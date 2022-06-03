@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		color: Platform.OS == "ios" ? "#007AFF" : "#2196F3",
-		fontWeight: "bold",
+		//fontWeight: 'normal',
 	},
 	disabledText: {
 		color: "#dddddd",

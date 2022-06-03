@@ -4,15 +4,16 @@ import { Text, View } from "./Themed";
 import { Farm } from "../models/farm";
 
 const FarmCard = ({ farm }: { farm: Farm }) => {
-	console.log("farm.imageUrl", farm.imageUrl);
 	return (
 		<View style={[styles.container, styles.shadowed]}>
 			<View style={styles.row}>
 				<View>
 					<Text style={styles.title}>{farm.name}</Text>
-					<Text style={styles.text}> {farm.displayName}</Text>
+					<Text style={styles.text}>{farm.displayName}</Text>
 					<Text style={styles.text}>phone: {farm.phone}</Text>
 					<Text style={styles.text}>open hours: {farm.openHours}</Text>
+					<Text style={styles.smallText}>created: {farm.creationDate}</Text>
+					<Text style={styles.smallText}>updated: {farm.updatedDate}</Text>
 				</View>
 				{farm.imageUrl ? (
 					<Image source={{ uri: farm.imageUrl }} style={{ width: 50, height: 50 }} />
@@ -51,6 +52,10 @@ const styles = StyleSheet.create({
 	row: {
 		flexDirection: "row",
 		alignItems: "stretch",
-		justifyContent:'space-between'
+		justifyContent: "space-between",
+	},
+	smallText: {
+		fontSize: 10,
+		color: "#959191",
 	},
 });
