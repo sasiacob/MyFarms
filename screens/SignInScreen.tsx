@@ -13,7 +13,6 @@ interface Credentials {
 	password: string;
 }
 
-
 const SignInScreen = ({ navigation }) => {
 	const [loading, setLoading] = useState(false);
 	const onSignUpPress = () => {
@@ -95,7 +94,6 @@ export default SignInScreen;
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		borderWidth: 4,
 		justifyContent: "center",
 		alignItems: "center",
 	},

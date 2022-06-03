@@ -4,6 +4,7 @@ import { AuthStack, HomeStack } from "./Stacks";
 
 const RootNavigation = () => {
 	const { user } = useAuthentication();
+
 	return user ? <HomeStack /> : <AuthStack />;
 };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { collection, onSnapshot } from "firebase/firestore";
-import { FarmCard, View } from "../components";
+import { FarmCard, View, Text, Button } from "../components";
 import { onLogout, db } from "../firebase/firebase";
 import { Farm } from "../models/farm";
 import { useNavigation } from "@react-navigation/native";
@@ -29,15 +29,27 @@ const HomeScreen = () => {
 	const onAddPress = async () => {
 		navigation.navigate("AddFarm");
 	};
+
 	return (
 		<View style={styles.container}>
 			<FlatList
-				style={{ borderWidth: 1 }}
+				style={styles.listContainer}
 				ListHeaderComponent={
 					<View>
-						<Button title="Log Out" onPress={onLogoutPress} />
-						<Button title="Fetch data" onPress={onFetchPress} />
-						<Button title="Add Farm" onPress={onAddPress} />
+						<View>
+							<Button title="Log Out" onPress={onLogoutPress} />
+						</View>
+						<View>
+							<Button title="Fetch data" onPress={onFetchPress} />
+						</View>
+						<View>
+							<Button title="Add Farm" onPress={onAddPress} />
+						</View>
+					</View>
+				}
+				ListEmptyComponent={
+					<View>
+						<Text>No farms added</Text>
 					</View>
 				}
 				renderItem={({ item }) => <FarmCard farm={item} />}
@@ -53,5 +65,12 @@ export default HomeScreen;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	listContainer: {
+		padding: 20,
+		width: "80%",
+		maxWidth: 500,
 	},
 });

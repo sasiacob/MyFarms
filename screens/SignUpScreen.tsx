@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, StyleSheet, TextInput } from "react-native";
 import { Formik } from "formik";
-import * as yup from "yup";
 import { Text, View } from "../components";
 import { FirebaseError } from "firebase/app";
 import { onSignUp } from "../firebase/firebase";
@@ -86,7 +85,6 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
-		borderWidth: 4,
 		justifyContent: "center",
 		alignItems: "center",
 	},
