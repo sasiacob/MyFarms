@@ -6,18 +6,13 @@ import { Text, View } from "../components";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { onSignIn } from "../firebase/firebase";
 import { FirebaseError } from "firebase/app";
+import { loginValidationSchema } from "../yup/schemas";
 
 interface Credentials {
 	email: string;
 	password: string;
 }
-const loginValidationSchema = yup.object().shape({
-	email: yup.string().email("Please enter a valid email").required("Email Address is required"),
-	password: yup
-		.string()
-		.min(8, ({ min }) => `Password must be at least ${min} characters`)
-		.required("Password is required"),
-});
+
 
 const SignInScreen = ({ navigation }) => {
 	const [loading, setLoading] = useState(false);
