@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
-const auth = getAuth();
 
- const useAuthentication = () => {
+const auth = getAuth();
+const useAuthentication = () => {
 	const [user, setUser] = useState<User>();
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			if (user) setUser(user);
-			else setUser(undefined);
-		});
+		const unsubscribe = onAuthStateChanged(
+			auth,
+			(user) => {
+				if (user) setUser(user);
+				else setUser(undefined);
+			},
+			(error) => {
+				console.warn(error);
+			}
+		);
 		return unsubscribe;
 	}, []);
 

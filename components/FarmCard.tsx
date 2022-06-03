@@ -6,14 +6,18 @@ import { Farm } from "../models/farm";
 const FarmCard = ({ farm }: { farm: Farm }) => {
 	console.log("farm.imageUrl", farm.imageUrl);
 	return (
-		<View style={styles.container}>
-			<Text>{farm.displayName}</Text>
-			<Text>{farm.name}</Text>
-			<Text>{farm.phone}</Text>
-			<Text>{farm.openHours}</Text>
-			{farm.imageUrl && (
-				<Image source={{ uri: farm.imageUrl }} style={{ width: 50, height: 50 }} />
-			)}
+		<View style={[styles.container, styles.shadowed]}>
+			<View style={styles.row}>
+				<View>
+					<Text style={styles.title}>{farm.name}</Text>
+					<Text style={styles.text}> {farm.displayName}</Text>
+					<Text style={styles.text}>phone: {farm.phone}</Text>
+					<Text style={styles.text}>open hours: {farm.openHours}</Text>
+				</View>
+				{farm.imageUrl ? (
+					<Image source={{ uri: farm.imageUrl }} style={{ width: 50, height: 50 }} />
+				) : null}
+			</View>
 		</View>
 	);
 };
@@ -22,8 +26,31 @@ export default FarmCard;
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 10,
+		padding: 20,
 		borderRadius: 5,
-		borderWidth: 1,
+		marginVertical: 10,
+	},
+	text: {
+		fontSize: 15,
+	},
+	title: {
+		fontWeight: "bold",
+		fontSize: 20,
+	},
+	shadowed: {
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+
+		elevation: 5,
+	},
+	row: {
+		flexDirection: "row",
+		alignItems: "stretch",
+		justifyContent:'space-between'
 	},
 });

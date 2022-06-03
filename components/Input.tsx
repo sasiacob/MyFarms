@@ -10,7 +10,7 @@ const Input = (props: InputProps) => {
 	return (
 		<View>
 			<TextInput style={[styles.textInput, styles.shadowed, style]} {...otherProps} />
-			<Text style={[styles.errorText, errorTextStyle]}>{errorText}</Text>
+			{errorText ? <Text style={[styles.errorText, errorTextStyle]}>{errorText}</Text> : null}
 		</View>
 	);
 };
@@ -20,8 +20,8 @@ export default Input;
 const styles = StyleSheet.create({
 	textInput: {
 		height: 40,
-		width: "100%",
-		margin: 10,
+
+		margin: 5,
 		backgroundColor: "white",
 		borderColor: "gray",
 		borderWidth: StyleSheet.hairlineWidth,
