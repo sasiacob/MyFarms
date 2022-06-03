@@ -1,39 +1,33 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Button, StyleSheet, TextInput } from "react-native";
+import { StyleSheet } from "react-native";
 import { Formik } from "formik";
-import * as yup from "yup";
-import { Text, View } from "../components";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { Input, Text, View, Button } from "../components";
 import { onSignIn } from "../firebase/firebase";
 import { FirebaseError } from "firebase/app";
 import { loginValidationSchema } from "../yup/schemas";
+import { useNavigation } from "@react-navigation/native";
 
 interface Credentials {
 	email: string;
 	password: string;
 }
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = () => {
 	const [loading, setLoading] = useState(false);
+	const navigation = useNavigation();
 	const onSignUpPress = () => {
-		navigation.push("SignUp");
+		navigation.navigate("SignUp");
 	};
-	const onValidSubmit = async (value: Credentials) => {
-		try {
-			setLoading(true);
-			await onSignIn(value.email, value.password);
-		} catch (error) {
-			console.log("error", error.message);
-		} finally {
-			setLoading(false);
-		}
+	const initialValues: Credentials = {
+		email: "",
+		password: "",
 	};
 	return (
 		<View style={styles.wrapper}>
 			<Text>SignIn Screen</Text>
 			<Formik
 				validationSchema={loginValidationSchema}
-				initialValues={{ email: "", password: "" }}
+				initialValues={initialValues}
 				onSubmit={async (value, actions) => {
 					try {
 						setLoading(true);
@@ -45,7 +39,7 @@ const SignInScreen = ({ navigation }) => {
 							});
 						} else {
 							actions.setErrors({
-								password: "Unknwon erorr",
+								password: "Unknown erorr",
 							});
 						}
 					} finally {
@@ -55,36 +49,36 @@ const SignInScreen = ({ navigation }) => {
 			>
 				{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 					<View style={[styles.loginContainer, styles.shadowed]}>
-						<TextInput
-							style={[styles.textInput, styles.shadowed]}
+						<Input
 							onChangeText={handleChange("email")}
 							onBlur={handleBlur("email")}
 							value={values.email}
 							keyboardType="email-address"
+							errorText={errors.email && touched.email ? errors.email : undefined}
 						/>
-						{errors.email && touched.email && (
-							<Text style={styles.errorText}>{errors.email}</Text>
-						)}
-						<TextInput
+
+						<Input
 							placeholder="Password"
-							style={[styles.textInput, styles.shadowed]}
 							onChangeText={handleChange("password")}
 							onBlur={handleBlur("password")}
 							value={values.password}
-							//secureTextEntry
+							secureTextEntry
+							errorText={
+								errors.password && touched.password ? errors.password : undefined
+							}
 						/>
-						{errors.password && touched.password && (
-							<Text style={styles.errorText}>{errors.password}</Text>
-						)}
-						{loading ? (
-							<ActivityIndicator />
-						) : (
-							<Button onPress={handleSubmit} title="Submit" />
-						)}
+
+						<Button
+							containerStyle={styles.btnContainer}
+							loading={loading}
+							onPress={handleSubmit}
+							title="Submit"
+						/>
+						<Button containerStyle={styles.btnContainer} onPress={onSignUpPress} title="Sign up" />
 					</View>
 				)}
 			</Formik>
-			<Button onPress={onSignUpPress} title="Sign up" />
+			
 		</View>
 	);
 };
@@ -97,22 +91,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-	textInput: {
-		height: 40,
-		width: "100%",
-		margin: 10,
-		backgroundColor: "white",
-		borderColor: "gray",
-		borderWidth: StyleSheet.hairlineWidth,
-		borderRadius: 5,
-		padding: 5,
-	},
+
 	loginContainer: {
-		width: "90%",
-		alignItems: "center",
+		padding: 20,
+		width: "80%",
+		maxWidth: 500,
 		backgroundColor: "white",
-		paddingHorizontal: 10,
-		paddingVertical: 40,
 	},
 	shadowed: {
 		shadowColor: "#000",
@@ -128,5 +112,9 @@ const styles = StyleSheet.create({
 	errorText: {
 		fontSize: 10,
 		color: "red",
+	},
+	btnContainer: {
+		alignSelf: "center",
+		marginVertical:10
 	},
 });

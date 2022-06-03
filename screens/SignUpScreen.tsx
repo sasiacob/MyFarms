@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { Button, StyleSheet, TextInput } from "react-native";
+import React from "react";
+import { StyleSheet } from "react-native";
 import { Formik } from "formik";
-import { Text, View } from "../components";
+import { Input, Text, View, Button } from "../components";
 import { FirebaseError } from "firebase/app";
 import { onSignUp } from "../firebase/firebase";
 import { signUpValidationSchema } from "../yup/schemas";
 
 const SignUpScreen = () => {
-	const [loading, setLoading] = useState(false);
 	return (
 		<View style={styles.wrapper}>
-			<Text>SignIn Screen</Text>
+			<Text>Sign In Screen</Text>
 			<Formik
 				validationSchema={signUpValidationSchema}
 				initialValues={{ email: "", password: "", confirmPassword: "" }}
@@ -33,46 +32,50 @@ const SignUpScreen = () => {
 			>
 				{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 					<View style={[styles.loginContainer, styles.shadowed]}>
-						<TextInput
+						<Input
 							placeholder="Email"
-							style={[styles.textInput, styles.shadowed]}
 							onChangeText={handleChange("email")}
 							onBlur={handleBlur("email")}
 							value={values.email}
 							keyboardType="email-address"
 							autoCapitalize="none"
 							autoCorrect={false}
+							errorText={errors.email && touched.email ? errors.email : undefined}
 						/>
-						{errors.email && touched.email && (
-							<Text style={styles.errorText}>{errors.email}</Text>
-						)}
-						<TextInput
+
+						<Input
 							placeholder="Password"
-							style={[styles.textInput, styles.shadowed]}
 							onChangeText={handleChange("password")}
 							onBlur={handleBlur("password")}
 							value={values.password}
 							secureTextEntry
 							autoCapitalize="none"
 							autoCorrect={false}
+							errorText={
+								errors.password && touched.password ? errors.password : undefined
+							}
 						/>
-						{errors.password && touched.password && (
-							<Text style={styles.errorText}>{errors.password}</Text>
-						)}
-						<TextInput
+
+						<Input
 							placeholder="Re-enter password"
-							style={[styles.textInput, styles.shadowed]}
 							onChangeText={handleChange("confirmPassword")}
 							onBlur={handleBlur("confirmPassword")}
 							value={values.confirmPassword}
 							secureTextEntry
 							autoCapitalize="none"
 							autoCorrect={false}
+							errorText={
+								errors.confirmPassword && touched.confirmPassword
+									? errors.confirmPassword
+									: undefined
+							}
 						/>
-						{errors.confirmPassword && touched.confirmPassword && (
-							<Text style={styles.errorText}>{errors.confirmPassword}</Text>
-						)}
-						<Button onPress={handleSubmit} title="Sign up" />
+
+						<Button
+							containerStyle={styles.btnContainer}
+							onPress={handleSubmit}
+							title="Sign up"
+						/>
 					</View>
 				)}
 			</Formik>
@@ -88,21 +91,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-	textInput: {
-		height: 40,
-		width: "100%",
-		margin: 10,
-		backgroundColor: "white",
-		borderColor: "gray",
-		borderWidth: StyleSheet.hairlineWidth,
-		borderRadius: 5,
-		padding: 5,
-	},
+
 	loginContainer: {
+		padding: 20,
 		width: "80%",
-		alignItems: "center",
+		maxWidth: 500,
 		backgroundColor: "white",
-		padding: 10,
 	},
 	shadowed: {
 		shadowColor: "#000",
@@ -115,8 +109,9 @@ const styles = StyleSheet.create({
 
 		elevation: 5,
 	},
-	errorText: {
-		fontSize: 10,
-		color: "red",
+
+	btnContainer: {
+		alignSelf: "center",
+		marginVertical: 10,
 	},
 });
