@@ -5,16 +5,15 @@ import { Formik } from "formik";
 import { Farm } from "../models/farm";
 import { Input, Button } from "../components";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db, linkPhotoToFarm, onAddFarm, onImageUpload } from "../firebase/firebase";
+import { db, onAddFarm, onImageUpload } from "../firebase/firebase";
 import { AddFarmValidationSchema } from "../yup/schemas";
 import { useNavigation } from "@react-navigation/native";
+
 const AddFarmScreen = () => {
 	const [usedNamesList, setUsedNamesList] = useState<string[]>([]);
-	const [image, setImage] = useState<string>();
-	const [imageUrl, setImageUrl] = useState<string>();
-	const [itemId, setItemId] = useState<string>();
+	const [localImageUri, setLocalImageUri] = useState<string>();
 	const navigation = useNavigation();
-	const [isUploading, setIsUploading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	useEffect(() => {
 		const unsubscribe = onSnapshot(collection(db, "farms"), (snapshot) => {
 			const data: string[] = snapshot.docs.map((doc) => {
@@ -37,31 +36,18 @@ const AddFarmScreen = () => {
 		console.log(result);
 
 		if (!result.cancelled) {
-			setImage(result.uri);
+			setLocalImageUri(result.uri);
 		}
 	};
 	const onGoBack = () => {
 		navigation.goBack();
 	};
-	const uploadImage = async () => {
-		try {
-			setIsUploading(true);
-			if (!image) return;
-			if (!itemId) return;
-			const response = await fetch(image);
-			const blob = await response.blob();
-			const imageName = `image_${itemId}`;
-			const imageUrl = await onImageUpload(blob, imageName);
-			setImageUrl(imageUrl);
+	const uploadImage = async (imageName: string): Promise<string> => {
+		const response = await fetch(localImageUri!);
+		const blob = await response.blob();
+		const imageUrl = await onImageUpload(blob, imageName);
 
-			// IMAGE NAME WILL HAVE FARM ID FOR NOT ALLOWING DUPLICATES
-			await linkPhotoToFarm(itemId, imageUrl);
-			setIsUploading(false);
-			onGoBack();
-		} catch (error) {
-			console.log("error", error);
-			setIsUploading(false);
-		}
+		return imageUrl;
 	};
 	const initialValues: Partial<Farm> = {
 		// EXCLUDE ID WITH PARTIAL
@@ -77,64 +63,71 @@ const AddFarmScreen = () => {
 				<Formik
 					validationSchema={AddFarmValidationSchema(usedNamesList)}
 					onSubmit={async (values, actions) => {
-						const newItemId: string = await onAddFarm(values);
-						setItemId(newItemId);
+						try {
+							setIsLoading(true);
+							if (localImageUri) {
+								const imageName = `image_${values.name}`;
+								const imageLink: string = await uploadImage(imageName);
+								values.imageUrl = imageLink;
+							}
+							const newItemId: string = await onAddFarm(values);
+							console.log("Farm created with id:", newItemId);
+
+							navigation.goBack();
+						} catch (e) {
+							console.log(e);
+						} finally {
+							setIsLoading(false);
+						}
 					}}
 					initialValues={initialValues}
 				>
 					{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 						<View>
 							<Text style={styles.title}>Add Farm</Text>
-							{itemId ? (
-								<View>
-									<Text>
-										Farm successfully created! Select a photo or go back
-									</Text>
-									<Button onPress={pickImage} title="Get Image" />
-									<Button onPress={onGoBack} title="Go back" />
-								</View>
-							) : (
-								<View>
-									<Input
-										placeholder="Farm Name"
-										onChangeText={handleChange("name")}
-										onBlur={handleBlur("name")}
-										value={values.name}
-										errorText={
-											errors.name && touched.name ? errors.name : undefined
-										}
-									/>
-									<Input
-										placeholder="Display Name"
-										onChangeText={handleChange("displayName")}
-										onBlur={handleBlur("displayName")}
-										value={values.displayName}
-										errorText={
-											errors.displayName && touched.displayName
-												? errors.displayName
-												: undefined
-										}
-									/>
-									<Input
-										placeholder="Phone"
-										onChangeText={handleChange("phone")}
-										onBlur={handleBlur("phone")}
-										value={values.phone}
-										errorText={
-											errors.phone && touched.phone ? errors.phone : undefined
-										}
-									/>
-									<Input
-										placeholder="Open Hours"
-										onChangeText={handleChange("openHours")}
-										onBlur={handleBlur("openHours")}
-										value={values.openHours}
-										errorText={
-											errors.openHours && touched.openHours
-												? errors.openHours
-												: undefined
-										}
-									/>
+
+							<View>
+								<Input
+									placeholder="Farm Name"
+									onChangeText={handleChange("name")}
+									onBlur={handleBlur("name")}
+									value={values.name}
+									errorText={
+										errors.name && touched.name ? errors.name : undefined
+									}
+								/>
+								<Input
+									placeholder="Display Name"
+									onChangeText={handleChange("displayName")}
+									onBlur={handleBlur("displayName")}
+									value={values.displayName}
+									errorText={
+										errors.displayName && touched.displayName
+											? errors.displayName
+											: undefined
+									}
+								/>
+								<Input
+									placeholder="Phone"
+									onChangeText={handleChange("phone")}
+									onBlur={handleBlur("phone")}
+									value={values.phone}
+									errorText={
+										errors.phone && touched.phone ? errors.phone : undefined
+									}
+								/>
+								<Input
+									placeholder="Open Hours"
+									onChangeText={handleChange("openHours")}
+									onBlur={handleBlur("openHours")}
+									value={values.openHours}
+									errorText={
+										errors.openHours && touched.openHours
+											? errors.openHours
+											: undefined
+									}
+								/>
+								{localImageUri ? null : (
 									<Input
 										placeholder="Image URL"
 										onChangeText={handleChange("imageUrl")}
@@ -146,26 +139,27 @@ const AddFarmScreen = () => {
 												: undefined
 										}
 									/>
+								)}
+								<Button onPress={pickImage} title="Pick Image" />
 
-									<View style={styles.btnContainer}>
-										<Button onPress={() => handleSubmit()} title="Add Farm" />
-									</View>
-								</View>
-							)}
-
-							{image ? (
 								<View style={styles.btnContainer}>
 									<Button
-										loading={isUploading}
-										onPress={uploadImage}
-										title="Upload Image"
+										loading={isLoading}
+										onPress={() => handleSubmit()}
+										title="Add Farm"
 									/>
 								</View>
-							) : null}
+							</View>
+
+							<View style={styles.btnContainer}>
+								<Button onPress={onGoBack} title="Go back" />
+							</View>
 						</View>
 					)}
 				</Formik>
-				{image && <Image source={{ uri: image }} style={{ width: 100, height: 100 }} />}
+				{localImageUri && (
+					<Image source={{ uri: localImageUri }} style={{ width: 100, height: 100 }} />
+				)}
 			</View>
 		</ScrollView>
 	);

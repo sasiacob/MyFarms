@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Formik } from "formik";
-import { Input, Text, View, Button } from "../components";
+import { Input, Button } from "../components";
 import { onSignIn } from "../firebase/firebase";
 import { FirebaseError } from "firebase/app";
 import { loginValidationSchema } from "../yup/schemas";
@@ -74,11 +74,14 @@ const SignInScreen = () => {
 							onPress={handleSubmit}
 							title="Submit"
 						/>
-						<Button containerStyle={styles.btnContainer} onPress={onSignUpPress} title="Sign up" />
+						<Button
+							containerStyle={styles.btnContainer}
+							onPress={onSignUpPress}
+							title="Sign up"
+						/>
 					</View>
 				)}
 			</Formik>
-			
 		</View>
 	);
 };
@@ -115,6 +118,6 @@ const styles = StyleSheet.create({
 	},
 	btnContainer: {
 		alignSelf: "center",
-		marginVertical:10
+		marginVertical: 10,
 	},
 });

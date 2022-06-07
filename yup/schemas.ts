@@ -1,18 +1,28 @@
 import * as yup from "yup";
 
 export const AddFarmValidationSchema = (usedNames: string[]) => {
+	const phoneRegExp =
+		/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+	const noStartWithNumberRegExp = /^[a-z|A-Z]/;
+
 	return yup.object().shape({
-		displayName: yup.string().required("Display Name is required"),
+		displayName: yup
+			.string()
+
+			.required("Display Name is required")
+			.max(20, "Display name cannot contain more than 20 characters"),
 
 		name: yup
 			.string()
 			.required("Name is required")
+			.matches(noStartWithNumberRegExp, "Name cannot start with number")
+			.max(10, "Name cannot contain more than 20 characters")
 			.test("Unique", "Farm Name must be unique", (value) =>
 				value ? !usedNames.includes(value!) : false
 			),
-		phone: yup.string(),
-		openHours: yup.string(),
-		imageUrl: yup.string(),
+		phone: yup.string().matches(phoneRegExp, "Phone number is not valid"),
+		openHours: yup.string().max(20, "Invalid input"),
+		imageUrl: yup.string().url("Url is not valid"),
 	});
 };
 

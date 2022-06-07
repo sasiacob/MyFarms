@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet, Image } from "react-native";
-import { Text, View } from "./Themed";
+import { StyleSheet, Image, Text, View } from "react-native";
 import { Farm } from "../models/farm";
 
 const FarmCard = ({ farm }: { farm: Farm }) => {
@@ -30,6 +29,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		borderRadius: 5,
 		marginVertical: 10,
+		backgroundColor: "white",
 	},
 	text: {
 		fontSize: 15,

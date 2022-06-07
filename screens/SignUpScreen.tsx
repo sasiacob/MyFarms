@@ -1,7 +1,7 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Formik } from "formik";
-import { Input, Text, View, Button } from "../components";
+import { Input, Button } from "../components";
 import { FirebaseError } from "firebase/app";
 import { onSignUp } from "../firebase/firebase";
 import { signUpValidationSchema } from "../yup/schemas";

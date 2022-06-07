@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
-import { FarmCard, View, Text, Button } from "../components";
+import { FarmCard, Button } from "../components";
 import { onLogout, db } from "../firebase/firebase";
 import { Farm } from "../models/farm";
 import { useNavigation } from "@react-navigation/native";
@@ -20,8 +20,14 @@ const HomeScreen = () => {
 
 				let item = {
 					id: doc.id,
-					creationDate: creationDate?.toDate().toDateString(),
-					updatedDate: updatedDate?.toDate().toDateString(),
+					creationDate:
+						creationDate?.toDate().toLocaleDateString() +
+						" " +
+						creationDate?.toDate().toLocaleTimeString(),
+					updatedDate:
+						updatedDate?.toDate().toLocaleDateString() +
+						" " +
+						updatedDate?.toDate().toLocaleTimeString(),
 					...obj,
 				} as Farm;
 				return item;
@@ -33,7 +39,7 @@ const HomeScreen = () => {
 	const onLogoutPress = () => {
 		onLogout();
 	};
-	const onFetchPress = async () => {};
+
 	const onAddPress = async () => {
 		navigation.navigate("AddFarm");
 	};
@@ -73,6 +79,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		//
 	},
 	listContainer: {
 		padding: 20,
