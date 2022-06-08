@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView, KeyboardAvoidingView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Formik } from "formik";
 import { Farm } from "../models/farm";
@@ -57,6 +57,7 @@ const AddFarmScreen = () => {
 		imageUrl: "",
 		phone: "",
 	};
+
 	return (
 		<ScrollView contentContainerStyle={styles.wrapper}>
 			<View style={styles.formContainer}>
@@ -140,19 +141,23 @@ const AddFarmScreen = () => {
 										}
 									/>
 								)}
-								<Button onPress={pickImage} title="Pick Image" />
+								<View style={styles.btnWrapper}>
+									<View style={styles.btnContainer}>
+										<Button onPress={pickImage} title="Pick Image" />
+									</View>
 
-								<View style={styles.btnContainer}>
-									<Button
-										loading={isLoading}
-										onPress={() => handleSubmit()}
-										title="Add Farm"
-									/>
+									<View style={styles.btnContainer}>
+										<Button
+											loading={isLoading}
+											onPress={() => handleSubmit()}
+											title="Add Farm"
+										/>
+									</View>
+
+									<View style={styles.btnContainer}>
+										<Button onPress={onGoBack} title="Go back" />
+									</View>
 								</View>
-							</View>
-
-							<View style={styles.btnContainer}>
-								<Button onPress={onGoBack} title="Go back" />
 							</View>
 						</View>
 					)}
@@ -189,4 +194,5 @@ const styles = StyleSheet.create({
 	btnContainer: {
 		marginVertical: 10,
 	},
+	btnWrapper: { alignSelf: "center", padding: 10 },
 });

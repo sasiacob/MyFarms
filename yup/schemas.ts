@@ -16,7 +16,7 @@ export const AddFarmValidationSchema = (usedNames: string[]) => {
 			.string()
 			.required("Name is required")
 			.matches(noStartWithNumberRegExp, "Name cannot start with number")
-			.max(10, "Name cannot contain more than 20 characters")
+			.max(20, "Name cannot contain more than 20 characters")
 			.test("Unique", "Farm Name must be unique", (value) =>
 				value ? !usedNames.includes(value!) : false
 			),

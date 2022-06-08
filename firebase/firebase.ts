@@ -37,7 +37,6 @@ export const onImageUpload = async (imageUri: Blob, imageName: string): Promise<
 	const imagesRef = ref(storage, `/images/${imageName}`);
 
 	const result: UploadResult = await uploadBytes(imagesRef, imageUri);
-	console.log("result", result);
 	const remoteUrl = await getDownloadURL(result.ref);
 	return remoteUrl;
 };

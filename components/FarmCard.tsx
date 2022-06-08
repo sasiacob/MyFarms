@@ -2,17 +2,23 @@ import React from "react";
 import { StyleSheet, Image, Text, View } from "react-native";
 import { Farm } from "../models/farm";
 
+const getDateString = (date: Date | undefined) => {
+	if (!date) return undefined;
+	return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+};
 const FarmCard = ({ farm }: { farm: Farm }) => {
+	const creation = getDateString(farm.creationDate);
+	const updated = getDateString(farm.updatedDate);
 	return (
 		<View style={[styles.container, styles.shadowed]}>
-			<View style={styles.row}>
+			<View style={styles.leftContainer}>
 				<View>
 					<Text style={styles.title}>{farm.name}</Text>
 					<Text style={styles.text}>{farm.displayName}</Text>
 					<Text style={styles.text}>phone: {farm.phone}</Text>
 					<Text style={styles.text}>open hours: {farm.openHours}</Text>
-					<Text style={styles.smallText}>created: {farm.creationDate}</Text>
-					<Text style={styles.smallText}>updated: {farm.updatedDate}</Text>
+					{creation ? <Text style={styles.smallText}>created: {creation}</Text> : null}
+					{updated ? <Text style={styles.smallText}>updated: {updated}</Text> : null}
 				</View>
 				{farm.imageUrl ? (
 					<Image source={{ uri: farm.imageUrl }} style={{ width: 50, height: 50 }} />
@@ -49,7 +55,7 @@ const styles = StyleSheet.create({
 
 		elevation: 5,
 	},
-	row: {
+	leftContainer: {
 		flexDirection: "row",
 		alignItems: "stretch",
 		justifyContent: "space-between",
